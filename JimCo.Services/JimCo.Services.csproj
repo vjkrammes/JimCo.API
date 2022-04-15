@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>V. James Krammes</Authors>
+    <Company>VJK Solutions, LLC</Company>
+    <Product>JimCo</Product>
+    <Description>This library is the data services layer that interfaces between the data access
+layer and the UI layers.</Description>
+    <Copyright>© Copyright 2021-2022 VJK Solutions, LLC. All Rights Reserved.</Copyright>
+    <NeutralLanguage>es-US</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JimCo.Common\JimCo.Common.csproj" />
+    <ProjectReference Include="..\JimCo.DataAccess\JimCo.DataAccess.csproj" />
+    <ProjectReference Include="..\JimCo.Models\JimCo.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

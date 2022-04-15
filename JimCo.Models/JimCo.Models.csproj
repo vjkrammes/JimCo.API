@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>V. James Krammes</Authors>
+    <Company>VJK Solutions, LLC</Company>
+    <Product>JimCo</Product>
+    <Description>This library contains DTO model objects for the JimCo project</Description>
+    <Copyright>© Copyright 2021-2022 VJK Solutions, LLC. All Rights Reserved.</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JimCo.Common\JimCo.Common.csproj" />
+    <ProjectReference Include="..\JimCo.DataAccess\JimCo.DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>
