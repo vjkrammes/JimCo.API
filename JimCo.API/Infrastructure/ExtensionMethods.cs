@@ -2,6 +2,7 @@
 using AspNetCoreRateLimit;
 
 using JimCo.API.Endpoints;
+using JimCo.API.Models;
 using JimCo.Common;
 using JimCo.Common.Interfaces;
 using JimCo.DataAccess;
@@ -28,7 +29,12 @@ public static class ExtensionMethods
 
     // IDatabase and IDatabaseBuilder
 
-    services.AddTransient<IDatabase>(x => new Database(Constants.ServerName, Constants.DatabaseName));
+    var dbsettings = configuration.GetSection("Database").Get<DatabaseSettings>();
+    if (dbsettings is null)
+    {
+      dbsettings = new();
+    }
+    services.AddTransient<IDatabase>(x => new Database(dbsettings.Server, dbsettings.Name, dbsettings.Auth));
     services.AddTransient<IDatabaseBuilder, DatabaseBuilder>();
 
     // app settings

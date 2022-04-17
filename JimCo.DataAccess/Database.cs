@@ -14,7 +14,7 @@ public class Database : IDatabase
   private string _connectionString => $"{_baseConnectionString};Database={_databaseName}";
   public string ConnectionString => _connectionString;
 
-  public Database(string server, string database)
+  public Database(string server, string database, string auth = "Trusted_Connection=true")
   {
     if (string.IsNullOrWhiteSpace(server))
     {
@@ -24,7 +24,7 @@ public class Database : IDatabase
     {
       throw new ArgumentNullException(nameof(database));
     }
-    _baseConnectionString = $"Server={server};Timeout=10;Trusted_Connection=true;Pooling=true;MultipleActiveResultSets=true;";
+    _baseConnectionString = $"Server={server};Timeout=10;{auth};Pooling=true;MultipleActiveResultSets=true;";
     _databaseName = database;
   }
 
