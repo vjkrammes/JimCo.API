@@ -11,11 +11,21 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.ConfigureServices(builder.Configuration);
 
-builder.Services.AddCors(options =>
-  options.AddPolicy(name: "defaultCORS", builder =>
-  builder.WithOrigins("http://localhost:3000", "https://localhost:3000")
-    .AllowAnyHeader()
-    .AllowAnyMethod()));
+var origins = builder.Configuration.GetSection("CORSOrigins").Get<string[]>();
+if (origins is null || !origins.Any())
+{
+  builder.Services.AddCors(options =>
+  options.AddPolicy("defaultCORS", builder =>
+  builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+}
+else
+{
+  builder.Services.AddCors(options =>
+    options.AddPolicy(name: "defaultCORS", builder =>
+    builder.WithOrigins(origins)
+      .AllowAnyHeader()
+      .AllowAnyMethod()));
+}
 
 var settings = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
 
