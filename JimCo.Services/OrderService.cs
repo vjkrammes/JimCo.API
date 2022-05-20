@@ -11,22 +11,35 @@ public class OrderService : IOrderService
 {
   private readonly IOrderRepository _orderRepository;
   private readonly ILineItemRepository _lineItemRepository;
+  private readonly ILineItemService _lineItemService;
 
-  public OrderService(IOrderRepository orderRepository, ILineItemRepository lineItemRepository)
+  public OrderService(IOrderRepository orderRepository, ILineItemRepository lineItemRepository, ILineItemService lineItemService)
   {
     _orderRepository = orderRepository;
     _lineItemRepository = lineItemRepository;
+    _lineItemService = lineItemService;
   }
 
   public async Task<int> CountAsync() => await _orderRepository.CountAsync();
 
-  private static ApiError ValidateModalAsync(OrderModel model, bool checkid = false)
+  private static ApiError ValidateModel(OrderModel model, bool checkid = false, bool online = false)
   {
-    if (model is null || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Pin) || model.Status == OrderStatus.Unspecified || 
-      model.AgeRequired < 0 || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Address1) || string.IsNullOrWhiteSpace(model.City) ||
-      string.IsNullOrWhiteSpace(model.State) || string.IsNullOrWhiteSpace(model.PostalCode))
+    if (online)
     {
-      return new(Strings.InvalidModel);
+      if (model is null || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Pin) || model.Status == OrderStatus.Unspecified ||
+        model.AgeRequired < 0 || string.IsNullOrWhiteSpace(model.Name))
+      {
+        return new(Strings.InvalidOnlineModel);
+      }
+    }
+    else
+    {
+      if (model is null || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Pin) || model.Status == OrderStatus.Unspecified ||
+        model.AgeRequired < 0 || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Address1) || string.IsNullOrWhiteSpace(model.City) ||
+        string.IsNullOrWhiteSpace(model.State) || string.IsNullOrWhiteSpace(model.PostalCode))
+      {
+        return new(Strings.InvalidModel);
+      }
     }
     if (IdEncoder.DecodeId(model.Pin) <= 0)
     {
@@ -69,7 +82,7 @@ public class OrderService : IOrderService
 
   public async Task<ApiError> InsertAsync(OrderModel model)
   {
-    var checkid = ValidateModalAsync(model);
+    var checkid = ValidateModel(model);
     if (!checkid.Successful)
     {
       return checkid;
@@ -90,9 +103,11 @@ public class OrderService : IOrderService
     }
   }
 
-  public async Task<ApiError> UpdateAsync(OrderModel model)
+  public async Task<ApiError> UpdateAsync(OrderModel model) => await UpdateAsync(model, false);
+
+  public async Task<ApiError> UpdateAsync(OrderModel model, bool online = false)
   {
-    var checkresult = ValidateModalAsync(model, true);
+    var checkresult = ValidateModel(model, true, online);
     if (!checkresult.Successful)
     {
       return checkresult;
@@ -213,27 +228,67 @@ public class OrderService : IOrderService
     return ret;
   }
 
-  public async Task<ApiError> CreateOrderAsync(OrderModel model, IEnumerable<LineItemModel>? items = null)
+  private async Task<ApiError> DoCreateOrderAsync(OrderModel model, IEnumerable<LineItemModel>? items = null)
   {
-    if (model is null)
-    {
-      return new(Strings.InvalidModel);
-    }
+    var messages = new List<string>();
     OrderEntity entity = model!;
     List<LineItemEntity> entities = new();
     if (items is not null)
     {
       foreach (var item in items)
       {
-        entities.Add(item!);
+        var checkresult = await _lineItemService.ValidateModelAsync(item);
+        if (!checkresult.Successful)
+        {
+          messages.AddRange(checkresult.Errors());
+        }
+        else
+        {
+          entities.Add(item!);
+        }
       }
     }
-    var result = await _orderRepository.CreateAsync(entity, entities);
-    if (result.Successful)
+    if (messages.Count == 0)
     {
-      model.Id = IdEncoder.EncodeId(entity.Id);
+      var result = await _orderRepository.CreateAsync(entity, entities);
+      if (result.Successful)
+      {
+        model.Id = IdEncoder.EncodeId(entity.Id);
+      }
+      return ApiError.FromDalResult(result);
     }
-    return ApiError.FromDalResult(result);
+    else
+    {
+      return new(code: 1, message: "Order creation failed", messages: messages.ToArray());
+    }
+  }
+
+  public async Task<ApiError> CreateOrderAsync(OrderModel model, IEnumerable<LineItemModel>? items = null)
+  {
+    if (model is null)
+    {
+      return new(Strings.InvalidModel);
+    }
+    var checkresult = ValidateModel(model);
+    if (!checkresult.Successful)
+    {
+      return checkresult;
+    }
+    return await DoCreateOrderAsync(model, items);
+  }
+
+  public async Task<ApiError> CreateOnlineOrderAsync(OrderModel model, IEnumerable<LineItemModel>? items = null)
+  {
+    if (model is null)
+    {
+      return new(Strings.InvalidModel);
+    }
+    var checkresult = ValidateModel(model, false, true);
+    if (!checkresult.Successful)
+    {
+      return checkresult;
+    }
+    return await DoCreateOrderAsync(model, items);
   }
 
   public async Task<ApiError> UpdateOrderAsync(OrderModel model, IEnumerable<LineItemModel>? added = null, IEnumerable<LineItemModel>? deleted = null)

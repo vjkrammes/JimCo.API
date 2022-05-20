@@ -6,6 +6,8 @@ using JimCo.DataAccess.Interfaces;
 using JimCo.Models;
 using JimCo.Services.Interfaces;
 
+using Zxcvbn;
+
 namespace JimCo.Services;
 public class LineItemService : ILineItemService
 {
@@ -22,17 +24,20 @@ public class LineItemService : ILineItemService
 
   public async Task<int> CountAsync() => await _lineItemRepository.CountAsync();
 
-  private async Task<ApiError> ValidateModelAsync(LineItemModel model, bool checkid = false)
+  public async Task<ApiError> ValidateModelAsync(LineItemModel model, bool checkid = false)
   {
     if (model is null || string.IsNullOrWhiteSpace(model.OrderId) || string.IsNullOrWhiteSpace(model.ProductId) || model.Quantity <= 0
       || model.Price <= 0M || model.AgeRequired < 0 || model.Status == OrderStatus.Unspecified)
     {
       return new(Strings.InvalidModel);
     }
-    var orderid = IdEncoder.DecodeId(model.OrderId);
-    if (orderid <= 0 || (await _orderRepository.ReadAsync(orderid) is null))
+    if (checkid)
     {
-      return new(string.Format(Strings.NotFound, "order", "id", model.OrderId));
+      var orderid = IdEncoder.DecodeId(model.OrderId);
+      if (orderid <= 0 || (await _orderRepository.ReadAsync(orderid) is null))
+      {
+        return new(string.Format(Strings.NotFound, "order", "id", model.OrderId));
+      }
     }
     var productid = IdEncoder.DecodeId(model.ProductId);
     if (productid <= 0 || (await _productRepository.ReadAsync(productid) is null))
@@ -164,6 +169,16 @@ public class LineItemService : ILineItemService
     LineItemModel ret = entity!;
     ret.CanDelete = true;
     return ret;
+  }
+
+  public async Task<ApiError> UpdateStatusAsync(string id, OrderStatus status)
+  {
+    if (!Enum.IsDefined(typeof(OrderStatus), status))
+{
+      return new(string.Format(Strings.Invalid, "status"));
+    }
+    var pid = IdEncoder.DecodeId(id);
+    return ApiError.FromDalResult(await _lineItemRepository.UpdateStatusAsync(pid, status));
   }
 
   public async Task<bool> OrderHasLineItemsAsync(string orderid)

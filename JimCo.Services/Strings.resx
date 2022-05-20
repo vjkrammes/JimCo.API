@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlertInPast" xml:space="preserve">
+    <value>The notice dates are in the past.</value>
+  </data>
   <data name="CantDelete" xml:space="preserve">
     <value>That {0} cannot be deleted because it has associated {1}.</value>
   </data>
@@ -132,7 +135,16 @@
   <data name="InvalidModel" xml:space="preserve">
     <value>The model passed is invalid. It is either null, or is missing required information.</value>
   </data>
+  <data name="InvalidOnlineModel" xml:space="preserve">
+    <value>The order passed is invalid. It is either null or is missing required information.</value>
+  </data>
   <data name="NotFound" xml:space="preserve">
     <value>No {0} with the {1} '{2}' was found.</value>
+  </data>
+  <data name="ReversedDates" xml:space="preserve">
+    <value>Notice end date is before the start date.</value>
+  </data>
+  <data name="UserAlreadyInGroup" xml:space="preserve">
+    <value>That user is already in the group named '{0}'.</value>
   </data>
 </root>

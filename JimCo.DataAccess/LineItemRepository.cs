@@ -3,6 +3,7 @@
 using Dapper;
 
 using JimCo.Common;
+using JimCo.Common.Enumerations;
 using JimCo.DataAccess.Entities;
 using JimCo.DataAccess.Interfaces;
 using JimCo.DataAccess.Models;
@@ -103,6 +104,26 @@ public class LineItemRepository : RepositoryBase<LineItemEntity>, ILineItemRepos
       await conn.OpenAsync();
       var ret = await conn.ExecuteScalarAsync<int>(sql);
       return ret > 0;
+    }
+    finally
+    {
+      await conn.CloseAsync();
+    }
+  }
+
+  public async Task<DalResult> UpdateStatusAsync(int lineitemid, OrderStatus status)
+  {
+    var sql = $"Update LineItems set Status={(int)status} where Id={lineitemid};";
+    using var conn = new SqlConnection(ConnectionString);
+    await conn.OpenAsync();
+    try
+    {
+      await conn.ExecuteAsync(sql);
+      return DalResult.Success;
+    }
+    catch (Exception ex)
+    {
+      return DalResult.FromException(ex);
     }
     finally
     {

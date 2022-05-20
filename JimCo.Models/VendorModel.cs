@@ -1,4 +1,6 @@
 ﻿
+using Dapper.Contrib.Extensions;
+
 using JimCo.Common;
 using JimCo.DataAccess.Entities;
 
@@ -16,6 +18,10 @@ public class VendorModel : ModelBase, IEquatable<VendorModel>, IComparable<Vendo
   public string Email { get; set; }
   public string Phone { get; set; }
   public string Fax { get; set; }
+  [Write(false)]
+  public bool HasVendorRole { get; set; }
+  [Write(false)]
+  public bool UserExists { get; set; }
 
   public VendorModel() : base(true)
   {
@@ -30,6 +36,8 @@ public class VendorModel : ModelBase, IEquatable<VendorModel>, IComparable<Vendo
     Email = string.Empty;
     Phone = string.Empty;
     Fax = string.Empty;
+    HasVendorRole = false;
+    UserExists = false;
   }
 
   public static VendorModel? FromEntity(VendorEntity entity) => entity is null ? null : new()
@@ -45,6 +53,8 @@ public class VendorModel : ModelBase, IEquatable<VendorModel>, IComparable<Vendo
     Email = entity.Email ?? string.Empty,
     Phone = entity.Phone ?? string.Empty,
     Fax = entity.Fax ?? string.Empty,
+    HasVendorRole = false,
+    UserExists = false,
     CanDelete = true
   };
 
@@ -76,6 +86,8 @@ public class VendorModel : ModelBase, IEquatable<VendorModel>, IComparable<Vendo
     Email = Email ?? string.Empty,
     Phone = Phone ?? string.Empty,
     Fax = Fax ?? string.Empty,
+    HasVendorRole = HasVendorRole,
+    UserExists = UserExists,
     CanDelete = CanDelete
   };
 

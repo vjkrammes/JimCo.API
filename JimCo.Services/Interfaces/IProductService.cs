@@ -21,6 +21,7 @@ public interface IProductService : IDataService<ProductModel>
   Task<ProductModel?> ReadForNameAsync(string vendorid, string name);
   Task<ApiError> UpdateCostAsync(string email, string productid, decimal cost);
   Task<ApiError> DiscontinueAsync(string email, string productid);
+  Task<ApiError> SellProductsAsync(ProductSaleModel[] product);
   Task<bool> CategoryHasProductsAsync(string categoryid);
   Task<bool> VendorHasProductsAsync(string vendorid);
   Task<bool> ProductsNeedReorderAsync();

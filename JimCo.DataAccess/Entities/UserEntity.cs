@@ -55,7 +55,6 @@ public class UserEntity : IIdEntity, ISqlEntity
     "DisplayName nvarchar(256) not null, " +
     "DateJoined datetime2 not null, " +
     "JobTitles nvarchar(max) not null, " +
-    "constraint UniqueIdentifier unique nonclustered (Identifier asc), " +
     "constraint UniqueEmail unique nonclustered (Email asc) " +
     ");";
 }

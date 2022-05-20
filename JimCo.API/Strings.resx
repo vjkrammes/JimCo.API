@@ -117,8 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AckRequired" xml:space="preserve">
+    <value>Alerts cannot be deleted if they require acknowledgement and have not been acknowledged.</value>
+  </data>
+  <data name="AlertAck" xml:space="preserve">
+    <value>Alert has already been acknowledged in {0}.</value>
+  </data>
+  <data name="BadAge" xml:space="preserve">
+    <value>If item is age restricted, then a required age must be specified. Likewise, if an item is not age restricted, it cannot have a required age.</value>
+  </data>
   <data name="BadPrice" xml:space="preserve">
     <value>Price in order does not match product price or any current promotion.</value>
+  </data>
+  <data name="CantDelete" xml:space="preserve">
+    <value>The {0} cannot be deleted because it has associated {1}.</value>
+  </data>
+  <data name="CantDemoteAdmin" xml:space="preserve">
+    <value>You cannot demote the last remaining admin user. There must always be at least one.</value>
+  </data>
+  <data name="Insufficient" xml:space="preserve">
+    <value>There are not enough '{0}' in stock to fulfull this request.</value>
   </data>
   <data name="Invalid" xml:space="preserve">
     <value>The {0} is invalid.</value>
@@ -126,14 +144,32 @@
   <data name="InvalidModel" xml:space="preserve">
     <value>The model passed is invalid. It is either null or is missing required information.</value>
   </data>
+  <data name="InvalidPrice" xml:space="preserve">
+    <value>The price for item '{0}' is invalid. It is not the product's price or the price of one of its promotions.</value>
+  </data>
+  <data name="NoAckNeeded" xml:space="preserve">
+    <value>Acknowledgement is not required.</value>
+  </data>
   <data name="NoItems" xml:space="preserve">
     <value>No order can be created. No items were included.</value>
+  </data>
+  <data name="NotAuthenticated" xml:space="preserve">
+    <value>You are not authenticated, or authentication information is not available.</value>
+  </data>
+  <data name="NotAuthorized" xml:space="preserve">
+    <value>You are not authorized to perform that action.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
     <value>No {0} with the {1} '{2}' was found.</value>
   </data>
+  <data name="NotOverriden" xml:space="preserve">
+    <value>The override identifier provided is not a manager.</value>
+  </data>
   <data name="ProductNotFound" xml:space="preserve">
     <value>No Product with the {0} '{1}' was found from that vendor.</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>The {0} is required.</value>
   </data>
   <data name="SignatureMismatch" xml:space="preserve">
     <value>The passed signature does not match the computed signature.</value>

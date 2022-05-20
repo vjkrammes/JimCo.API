@@ -26,9 +26,21 @@ public class AlertService : IAlertService
     {
       model.CreateDate = DateTime.UtcNow;
     }
-    if (model.EndDate < model.StartDate)
+    if (!string.IsNullOrWhiteSpace(model.Identifier))
     {
-      return new(string.Format(Strings.InvalidModel, "end date"));
+      model.StartDate = default;
+      model.EndDate = default;
+    }
+    else
+    {
+      if (model.EndDate < model.StartDate)
+      {
+        return new(Strings.ReversedDates);
+      }
+      if (model.EndDate < DateTime.UtcNow)
+      {
+        return new(Strings.AlertInPast);
+      }
     }
     if (string.IsNullOrWhiteSpace(model.Id))
     {
@@ -111,7 +123,7 @@ public class AlertService : IAlertService
   {
     var ret = alerts.ToModels<AlertModel, AlertEntity>();
     ret.ForEach(x => x.CanDelete = true);
-    return ret;
+    return ret.OrderByDescending(x => x.EndDate);
   }
 
   public async Task<IEnumerable<AlertModel>> GetAsync()
@@ -138,6 +150,12 @@ public class AlertService : IAlertService
     return Finish(entities);
   }
 
+  public async Task<IEnumerable<AlertModel>> GetForIdentifierAsync(string identifier, bool includeAcknowledged = false)
+  {
+    var entities = await _alertRepository.GetForIdentifierAsync(identifier, includeAcknowledged);
+    return Finish(entities);
+  }
+
   public async Task<AlertModel?> ReadAsync(string id)
   {
     var decodedid = IdEncoder.DecodeId(id);
@@ -151,6 +169,16 @@ public class AlertService : IAlertService
     return ret;
   }
 
+  public async Task<ApiError> Acknowledge(AlertModel model)
+  {
+    if (model is null)
+    {
+      return new(Strings.InvalidModel);
+    }
+    AlertEntity entity = model!;
+    return ApiError.FromDalResult(await _alertRepository.Acknowledge(entity));
+  }
+
   public async Task<int> DeleteExpiredAsync() => await _alertRepository.DeleteExpiredAsync();
 
   public async Task<IEnumerable<string>> GetExpiredAsync()
@@ -158,4 +186,6 @@ public class AlertService : IAlertService
     var ids = await _alertRepository.GetExpiredAsync();
     return ids.Select(x => IdEncoder.EncodeId(x));
   }
+
+  public async Task<ApiError> DeleteAllAsync(string identifier) => ApiError.FromDalResult(await _alertRepository.DeleteAllAsync(identifier));
 }

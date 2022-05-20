@@ -61,11 +61,65 @@ namespace JimCo.API {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alerts cannot be deleted if they require acknowledgement and have not been acknowledged..
+        /// </summary>
+        internal static string AckRequired {
+            get {
+                return ResourceManager.GetString("AckRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alert has already been acknowledged in {0}..
+        /// </summary>
+        internal static string AlertAck {
+            get {
+                return ResourceManager.GetString("AlertAck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If item is age restricted, then a required age must be specified. Likewise, if an item is not age restricted, it cannot have a required age..
+        /// </summary>
+        internal static string BadAge {
+            get {
+                return ResourceManager.GetString("BadAge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Price in order does not match product price or any current promotion..
         /// </summary>
         internal static string BadPrice {
             get {
                 return ResourceManager.GetString("BadPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} cannot be deleted because it has associated {1}..
+        /// </summary>
+        internal static string CantDelete {
+            get {
+                return ResourceManager.GetString("CantDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot demote the last remaining admin user. There must always be at least one..
+        /// </summary>
+        internal static string CantDemoteAdmin {
+            get {
+                return ResourceManager.GetString("CantDemoteAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are not enough &apos;{0}&apos; in stock to fulfull this request..
+        /// </summary>
+        internal static string Insufficient {
+            get {
+                return ResourceManager.GetString("Insufficient", resourceCulture);
             }
         }
         
@@ -88,11 +142,47 @@ namespace JimCo.API {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The price for item &apos;{0}&apos; is invalid. It is not the product&apos;s price or the price of one of its promotions..
+        /// </summary>
+        internal static string InvalidPrice {
+            get {
+                return ResourceManager.GetString("InvalidPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acknowledgement is not required..
+        /// </summary>
+        internal static string NoAckNeeded {
+            get {
+                return ResourceManager.GetString("NoAckNeeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No order can be created. No items were included..
         /// </summary>
         internal static string NoItems {
             get {
                 return ResourceManager.GetString("NoItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not authenticated, or authentication information is not available..
+        /// </summary>
+        internal static string NotAuthenticated {
+            get {
+                return ResourceManager.GetString("NotAuthenticated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not authorized to perform that action..
+        /// </summary>
+        internal static string NotAuthorized {
+            get {
+                return ResourceManager.GetString("NotAuthorized", resourceCulture);
             }
         }
         
@@ -106,11 +196,29 @@ namespace JimCo.API {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The override identifier provided is not a manager..
+        /// </summary>
+        internal static string NotOverriden {
+            get {
+                return ResourceManager.GetString("NotOverriden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Product with the {0} &apos;{1}&apos; was found from that vendor..
         /// </summary>
         internal static string ProductNotFound {
             get {
                 return ResourceManager.GetString("ProductNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} is required..
+        /// </summary>
+        internal static string Required {
+            get {
+                return ResourceManager.GetString("Required", resourceCulture);
             }
         }
         

@@ -6,6 +6,8 @@ using JimCo.Common;
 using JimCo.Common.Attributes;
 using JimCo.Common.Interfaces;
 
+using Newtonsoft.Json;
+
 namespace JimCo.DataAccess.Entities;
 
 [Table("Promotions")]
@@ -58,6 +60,8 @@ public class PromotionEntity : IIdEntity, ISqlEntity
     MaximumQuantity = 0;
   }
 
+  [Write(false)]
+  [JsonIgnore]
   public static string Sql => "create table Promotions (" +
     "Id integer constraint PKPromotion primary key identity (1,1) not null, " +
     "ProductId integer not null, " +

@@ -49,6 +49,10 @@ app.UseCors("defaultCORS");
 
 app.UseHttpsRedirection();
 app.UseIpRateLimiting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.ConfigureEndpoints();
 if (settings.UpdateDatabase)
 {

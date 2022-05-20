@@ -61,6 +61,15 @@ namespace JimCo.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The notice dates are in the past..
+        /// </summary>
+        internal static string AlertInPast {
+            get {
+                return ResourceManager.GetString("AlertInPast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to That {0} cannot be deleted because it has associated {1}..
         /// </summary>
         internal static string CantDelete {
@@ -106,11 +115,38 @@ namespace JimCo.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The order passed is invalid. It is either null or is missing required information..
+        /// </summary>
+        internal static string InvalidOnlineModel {
+            get {
+                return ResourceManager.GetString("InvalidOnlineModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No {0} with the {1} &apos;{2}&apos; was found..
         /// </summary>
         internal static string NotFound {
             get {
                 return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notice end date is before the start date..
+        /// </summary>
+        internal static string ReversedDates {
+            get {
+                return ResourceManager.GetString("ReversedDates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to That user is already in the group named &apos;{0}&apos;..
+        /// </summary>
+        internal static string UserAlreadyInGroup {
+            get {
+                return ResourceManager.GetString("UserAlreadyInGroup", resourceCulture);
             }
         }
     }

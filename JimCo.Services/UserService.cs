@@ -16,8 +16,7 @@ public class UserService : IUserService
 
   private async Task<ApiError> ValidateModelAsync(UserModel model, bool checkid = false, bool update = false)
   {
-    if (model is null || string.IsNullOrWhiteSpace(model.Identifier) || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.FirstName)
-      || string.IsNullOrWhiteSpace(model.LastName) || string.IsNullOrWhiteSpace(model.DisplayName))
+    if (model is null || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.DisplayName))
     {
       return new(Strings.InvalidModel);
     }
@@ -27,7 +26,7 @@ public class UserService : IUserService
     }
     if (string.IsNullOrWhiteSpace(model.JobTitles))
     {
-      model.JobTitles = string.Empty;
+      model.JobTitles = "[]";
     }
     if (string.IsNullOrWhiteSpace(model.Id))
     {
@@ -52,18 +51,6 @@ public class UserService : IUserService
     else if (existingfromemail is not null)
     {
       return new(string.Format(Strings.Duplicate, "user", "email", model.Email));
-    }
-    var existingfromidentifier = await _userRepository.ReadForIdentifierAsync(model.Identifier);
-    if (update)
-    {
-      if (existingfromidentifier is not null && existingfromidentifier.Id != IdEncoder.DecodeId(model.Id))
-      {
-        return new(string.Format(Strings.Duplicate, "user", "identifier", model.Identifier));
-      }
-    }
-    else if (existingfromidentifier is not null)
-    {
-      return new(string.Format(Strings.Duplicate, "user", "identifier", model.Identifier));
     }
     return ApiError.Success;
   }
@@ -142,6 +129,18 @@ public class UserService : IUserService
     return models;
   }
 
+  public async Task<IEnumerable<UserModel>> GetForRoleAsync(string rolename)
+  {
+    var entities = await _userRepository.GetForRoleAsync(rolename);
+    var models = entities.ToModels<UserModel, UserEntity>();
+    models.ForEach(x => x.CanDelete = !x.JobTitles.Contains("admin", StringComparison.OrdinalIgnoreCase));
+    return models;
+  }
+
+  public async Task<IEnumerable<UserModel>> GetManagersAsync() => await GetForRoleAsync("manager");
+
+  public async Task<IEnumerable<UserModel>> GetAdminsAsync() => await GetForRoleAsync("admin");
+
   private static UserModel? Finish(UserEntity? entity)
   {
     UserModel model = entity!;
@@ -165,4 +164,13 @@ public class UserService : IUserService
   public async Task<UserModel?> ReadForEmailAsync(string email) => Finish(await _userRepository.ReadAsync(email))!;
 
   public async Task<UserModel?> ReadForIdentifierAsync(string identifier) => Finish(await _userRepository.ReadForIdentifierAsync(identifier))!;
+
+  public async Task<ApiError> AddRolesAsync(string email, params string[] roles) =>
+    ApiError.FromDalResult(await _userRepository.AddRolesAsync(email, roles));
+
+  public async Task<ApiError> RemoveRolesAsync(string email, params string[] roles) =>
+    ApiError.FromDalResult(await _userRepository.RemoveRolesAsync(email, roles));
+
+  public async Task<ApiError> ToggleRolesAsync(string email, params string[] roles) =>
+    ApiError.FromDalResult(await _userRepository.ToggleRolesAsync(email, roles));
 }

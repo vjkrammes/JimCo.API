@@ -3,6 +3,8 @@
 using JimCo.Common;
 using JimCo.DataAccess.Entities;
 
+using Newtonsoft.Json;
+
 namespace JimCo.Models;
 
 public class UserModel : ModelBase, IEquatable<UserModel>, IFormattable
@@ -15,6 +17,32 @@ public class UserModel : ModelBase, IEquatable<UserModel>, IFormattable
   public string DisplayName { get; set; }
   public DateTime DateJoined { get; set; }
   public string JobTitles { get; set; }
+
+  private bool HasRole(string rolename)
+  {
+    if (string.IsNullOrWhiteSpace(rolename))
+    {
+      return false;
+    }
+    try
+    {
+      var roles = JsonConvert.DeserializeObject<string[]>(JobTitles);
+      if (roles is null || !roles.Any())
+      {
+        return false;
+      }
+      return roles.Contains(rolename, StringComparer.OrdinalIgnoreCase);
+    }
+    catch
+    {
+      return false;
+    }
+  }
+
+  public bool HasVendorRole => HasRole("vendor");
+  public bool HasEmployeeRole => HasRole("employee");
+  public bool HasManagerRole => HasRole("manager");
+  public bool HasAdminRole => HasRole("admin");
 
   public UserModel() : base(true)
   {
@@ -30,7 +58,7 @@ public class UserModel : ModelBase, IEquatable<UserModel>, IFormattable
 
   public static UserModel? FromEntity(UserEntity entity) => entity is null ? null : new()
   {
-    Id = IdEncoder.EncodeId( entity.Id),
+    Id = IdEncoder.EncodeId(entity.Id),
     Identifier = entity.Identifier ?? string.Empty,
     Email = entity.Email ?? string.Empty,
     FirstName = entity.FirstName ?? string.Empty,

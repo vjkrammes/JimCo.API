@@ -30,7 +30,7 @@ public class ProductService : IProductService
   {
     if (model is null || string.IsNullOrWhiteSpace(model.CategoryId) || string.IsNullOrWhiteSpace(model.VendorId) || string.IsNullOrWhiteSpace(model.Name)
       || string.IsNullOrWhiteSpace(model.Description) || string.IsNullOrWhiteSpace(model.Sku) || model.Price <= 0M || model.AgeRequired < 0
-      || model.Quantity <= 0 || model.ReorderLevel <= 0 || model.ReorderAmount <= 0 || model.Cost < 0M)
+      || model.Quantity < 0 || model.ReorderLevel < 0 || model.ReorderAmount < 0 || model.Cost < 0M)
     {
       return new(Strings.InvalidModel);
     }
@@ -283,6 +283,10 @@ public class ProductService : IProductService
     var pid = IdEncoder.DecodeId(productid);
     return ApiError.FromDalResult(await _productRepository.DiscontinueAsync(email, pid));
   }
+
+  public async Task<ApiError> SellProductsAsync(ProductSaleModel[] products) =>
+    ApiError.FromDalResult(await _productRepository.SellProductsAsync(products.Select(x =>
+    new ProductSaleEntity { ProductId = IdEncoder.DecodeId(x.ProductId), Quantity = x.Quantity }).ToArray()));
 
   public async Task<bool> CategoryHasProductsAsync(string categoryid)
   {

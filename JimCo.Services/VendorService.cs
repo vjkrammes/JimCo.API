@@ -10,18 +10,20 @@ public class VendorService : IVendorService
 {
   private readonly IVendorRepository _vendorRepository;
   private readonly IProductRepository _productRepository;
+  private readonly IUserRepository _userRepository;
 
-  public VendorService(IVendorRepository vendorRepository, IProductRepository productRepository)
+  public VendorService(IVendorRepository vendorRepository, IProductRepository productRepository, IUserRepository userRepository)
   {
     _vendorRepository = vendorRepository;
     _productRepository = productRepository;
+    _userRepository = userRepository;
   }
 
   public async Task<int> CountAsync() => await _vendorRepository.CountAsync();
 
   private async Task<ApiError> ValidateModelAsync(VendorModel model, bool checkid = false, bool update = false)
   {
-    if (model is null || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Contact))
+    if (model is null || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Contact) || string.IsNullOrWhiteSpace(model.Email))
     {
       return new(Strings.InvalidModel);
     }
@@ -124,6 +126,9 @@ public class VendorService : IVendorService
     foreach (var model in models)
     {
       model.CanDelete = !await _productRepository.VendorHasProductsAsync(IdEncoder.DecodeId(model.Id));
+      UserModel? user = (await _userRepository.ReadAsync(model.Email))!;
+      model.UserExists = user is not null;
+      model.HasVendorRole = user?.HasVendorRole ?? false;
     }
     return models;
   }
@@ -131,6 +136,12 @@ public class VendorService : IVendorService
   public async Task<IEnumerable<VendorModel>> GetAsync()
   {
     var entities = await _vendorRepository.GetAsync();
+    return await Finish(entities);
+  }
+
+  public async Task<IEnumerable<VendorModel>> PageVendorsAsync(int pageno, int pagesize, string columnName = "Id")
+  {
+    var entities = await _vendorRepository.PageVendorsAsync(pageno, pagesize, columnName);
     return await Finish(entities);
   }
 

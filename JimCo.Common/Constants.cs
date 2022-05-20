@@ -3,6 +3,7 @@ public static class Constants
 {
   public const int DefaultPageSize = 5;
   public const double DefaultSessionTimeout = 20.0;
+  public const int MaxPageSize = 10;
   public const int NameLength = 50;
   public const int UriLength = 256;
 

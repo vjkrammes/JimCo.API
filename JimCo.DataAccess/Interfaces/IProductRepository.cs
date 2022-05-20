@@ -20,6 +20,7 @@ public interface IProductRepository : IRepository<ProductEntity>
   Task<ProductEntity?> ReadForNameAsync(int vendorid, string name);
   Task<DalResult> UpdateCostAsync(string email, int productid, decimal cost);
   Task<DalResult> DiscontinueAsync(string email, int productid);
+  Task<DalResult> SellProductsAsync(ProductSaleEntity[] entities);
   Task<bool> CategoryHasProductsAsync(int categoryid);
   Task<bool> VendorHasProductsAsync(int vendorid);
   Task<bool> ProductsNeedReorderAsync();

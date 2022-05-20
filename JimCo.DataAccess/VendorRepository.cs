@@ -1,5 +1,6 @@
 ﻿using System.Data;
 
+using JimCo.Common;
 using JimCo.DataAccess.Entities;
 using JimCo.DataAccess.Interfaces;
 using JimCo.DataAccess.Models;
@@ -9,6 +10,25 @@ namespace JimCo.DataAccess;
 public class VendorRepository : RepositoryBase<VendorEntity>, IVendorRepository
 {
   public VendorRepository(IDatabase database) : base(database) { }
+
+  public async Task<IEnumerable<VendorEntity>> PageVendorsAsync(int pageno, int pagesize, string columnName = "Id")
+  {
+    if (pageno <= 0)
+    {
+      pageno = 1;
+    }
+    if (pagesize <= 0)
+    {
+      pagesize = Constants.DefaultPageSize;
+    }
+    if (pagesize > Constants.MaxPageSize)
+    {
+      pagesize = Constants.MaxPageSize;
+    }
+    var offset = (pageno - 1) * pagesize;
+    var sql = $"select * from Vendors order by {columnName} offset {offset} rows fetch next {pagesize} rows only;";
+    return await GetAsync(sql, new QueryParameter("columnname", columnName, DbType.String));
+  }
 
   public async Task<VendorEntity?> ReadAsync(string name)
   {

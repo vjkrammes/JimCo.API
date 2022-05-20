@@ -145,7 +145,7 @@ public class ProductRepository : RepositoryBase<ProductEntity>, IProductReposito
 
   public async Task<IEnumerable<ProductEntity>> SearchForProductAsync(int categoryid, string searchText)
   {
-    var sql = $"select * from Product where CategoryId={categoryid} and Name like CONCAT('%', @searchText, '%') or Description like CONCAT('%', @searchText, '%');";
+    var sql = $"select * from Products where CategoryId={categoryid} and (Name like CONCAT('%', @searchText, '%') or Description like CONCAT('%', @searchText, '%'));";
     return await GetAsync(sql, new QueryParameter("searchText", searchText, DbType.String));
   }
 
@@ -281,6 +281,51 @@ public class ProductRepository : RepositoryBase<ProductEntity>, IProductReposito
     }
     catch (Exception ex)
     {
+      return DalResult.FromException(ex);
+    }
+    finally
+    {
+      await conn.CloseAsync();
+    }
+  }
+
+  public async Task<DalResult> SellProductsAsync(ProductSaleEntity[] entities)
+  {
+    if (entities is null || !entities.Any())
+    {
+      return DalResult.NotFound;
+    }
+    using var conn = new SqlConnection(ConnectionString);
+    await conn.OpenAsync();
+    using var transaction = await conn.BeginTransactionAsync();
+    try
+    {
+      foreach (var entity in entities)
+      {
+        var product = await ReadAsync(entity.ProductId);
+        if (product is null)
+        {
+          await transaction.RollbackAsync();
+          return new(DalErrorCode.NotFound, new Exception($"No product with the id '{entity.ProductId}' was found"));
+        }
+        product.Quantity -= entity.Quantity;
+        if (product.Quantity < 0)
+        {
+          product.Quantity = 0;
+        }
+        var result = await UpdateAsync(product);
+        if (!result.Successful)
+        {
+          await transaction.RollbackAsync();
+          return result;
+        }
+      }
+      await transaction.CommitAsync();
+      return DalResult.Success;
+    }
+    catch (Exception ex)
+    {
+      await transaction.RollbackAsync();
       return DalResult.FromException(ex);
     }
     finally

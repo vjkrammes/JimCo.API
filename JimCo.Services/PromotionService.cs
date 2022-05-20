@@ -22,8 +22,8 @@ public class PromotionService : IPromotionService
   private async Task<ApiError> ValidateModelAsync(PromotionModel model, bool checkid = false)
   {
     if (model is null || string.IsNullOrWhiteSpace(model.ProductId) || string.IsNullOrWhiteSpace(model.CreatedBy)
-      || string.IsNullOrWhiteSpace(model.CanceledBy) || model.Price <= 0M || string.IsNullOrWhiteSpace(model.Description)
-      || (model.LimitedQuantity && model.MaximumQuantity <= 0) || (!model.LimitedQuantity && model.MaximumQuantity != 0) || model.MaximumQuantity < 0)
+      || model.Price <= 0M || string.IsNullOrWhiteSpace(model.Description) || (model.LimitedQuantity && model.MaximumQuantity <= 0) 
+      || (!model.LimitedQuantity && model.MaximumQuantity != 0) || model.MaximumQuantity < 0)
     {
       return new(Strings.InvalidModel);
     }
@@ -175,5 +175,26 @@ public class PromotionService : IPromotionService
   {
     var pid = IdEncoder.DecodeId(productid);
     return await _promotionRepository.ProductHasPromotionsAsync(pid);
+  }
+
+  public async Task<ApiError> CancelAsync(string promotionId, string canceledBy)
+  {
+    var pid = IdEncoder.DecodeId(promotionId);
+    return ApiError.FromDalResult(await _promotionRepository.CancelAsync(pid, canceledBy));
+  }
+
+
+  public async Task<ApiError> UnCancelAsync(string promotionId)
+  {
+    var pid = IdEncoder.DecodeId(promotionId);
+    return ApiError.FromDalResult(await _promotionRepository.UnCancelAsync(pid));
+  }
+
+  public async Task<ApiError> DeleteAllExpiredAsync() => ApiError.FromDalResult(await _promotionRepository.DeleteAllExpiredAsync());
+
+  public async Task<ApiError> DeleteExpiredAsync(string productId)
+  {
+    var pid = IdEncoder.DecodeId(productId);
+    return ApiError.FromDalResult(await _promotionRepository.DeleteExpiredAsync(pid));
   }
 }
