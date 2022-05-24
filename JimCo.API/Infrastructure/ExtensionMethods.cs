@@ -104,6 +104,7 @@ public static class ExtensionMethods
     services.AddTransient<ICategoryRepository, CategoryRepository>();
     services.AddTransient<IGroupRepository, GroupRepository>();
     services.AddTransient<ILineItemRepository, LineItemRepository>();
+    services.AddTransient<ILogRepository, LogRepository>();
     services.AddTransient<IOrderRepository, OrderRepository>();
     services.AddTransient<IProductRepository, ProductRepository>();
     services.AddTransient<IPromotionRepository, PromotionRepository>();
@@ -117,6 +118,7 @@ public static class ExtensionMethods
     services.AddTransient<ICategorySeeder, CategorySeeder>();
     services.AddTransient<IGroupSeeder, GroupSeeder>();
     services.AddTransient<ILineItemSeeder, LineItemSeeder>();
+    services.AddTransient<ILogSeeder, LogSeeder>();
     services.AddTransient<IOrderSeeder, OrderSeeder>();
     services.AddTransient<IProductSeeder, ProductSeeder>();
     services.AddTransient<IPromotionSeeder, PromotionSeeder>();
@@ -130,6 +132,7 @@ public static class ExtensionMethods
     services.AddTransient<ICategoryService, CategoryService>();
     services.AddTransient<IGroupService, GroupService>();
     services.AddTransient<ILineItemService, LineItemService>();
+    services.AddTransient<ILogService, LogService>();
     services.AddTransient<IOrderService, OrderService>();
     services.AddTransient<IProductService, ProductService>();
     services.AddTransient<IPromotionService, PromotionService>();
@@ -146,6 +149,7 @@ public static class ExtensionMethods
     app.ConfigureCategoryEndpoints();
     app.ConfigureGroupEndpoints();
     app.ConfigureLineItemEndpoints();
+    app.ConfigureLoggingEndpoints();
     app.ConfigureOrderEndpoints();
     app.ConfigureProductEndpoints();
     app.ConfigurePromotionEndpoints();

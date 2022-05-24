@@ -6,9 +6,21 @@ using System.Text;
 
 using JimCo.Common.Enumerations;
 
+using Microsoft.AspNetCore.Http;
+
 namespace JimCo.Common;
 public static class ExtensionMethods
 {
+  public static byte[] GetIpAddress(this HttpContext context)
+  {
+    var ipaddress = context.Connection.RemoteIpAddress;
+    if (ipaddress is null)
+    {
+      return new byte[] { 0, 0, 0, 0 };
+    }
+    return ipaddress.GetAddressBytes();
+  } 
+
   public static bool IsStrongPassword(this PasswordStrength strength) => strength is PasswordStrength.Strong or PasswordStrength.VeryStrong;
 
   public static string FirstWord(this string value)

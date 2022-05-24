@@ -37,13 +37,13 @@ public class MustHaveRoleHandler : AuthorizationHandler<MustHaveRoleRequirement>
       context.Fail(new(this, "No Token found"));
       return;
     }
-    var email = token.Claims.FirstOrDefault(x => x.Type == "email")?.Value;
-    if (string.IsNullOrWhiteSpace(email))
+    var identifier = token.Claims.FirstOrDefault(x => x.Type == "sub")?.Value;
+    if (string.IsNullOrWhiteSpace(identifier))
     {
       context.Fail(new(this, "Email claim not found"));
       return;
     }
-    var user = await _userService.ReadForEmailAsync(email);
+    var user = await _userService.ReadForIdentifierAsync(identifier);
     if (user is null)
     {
       context.Fail(new(this, "User not found"));

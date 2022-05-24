@@ -22,6 +22,7 @@ public class DatabaseBuilder : IDatabaseBuilder
   private readonly ICategorySeeder _categorySeeder;
   private readonly IGroupSeeder _groupSeeder;
   private readonly ILineItemSeeder _lineItemSeeder;
+  private readonly ILogSeeder _logSeeder;
   private readonly IOrderSeeder _orderSeeder;
   private readonly IProductSeeder _productSeeder;
   private readonly IPromotionSeeder _promotionSeeder;
@@ -31,7 +32,7 @@ public class DatabaseBuilder : IDatabaseBuilder
 
   public DatabaseBuilder(IDatabase database, IConfiguration? configuration, IAlertSeeder alertSeeder, ICategorySeeder categorySeeder, IGroupSeeder groupSeeder, 
     ILineItemSeeder lineItemSeeder, IOrderSeeder orderSeeder, IProductSeeder productSeeder, IPromotionSeeder promotionSeeder, 
-    ISystemSettingsSeeder systemSettingsSeeder, IUserSeeder userSeeder, IVendorSeeder vendorSeeder)
+    ISystemSettingsSeeder systemSettingsSeeder, IUserSeeder userSeeder, IVendorSeeder vendorSeeder, ILogSeeder logSeeder)
   {
     _database = database;
     _configuration = configuration;
@@ -39,6 +40,7 @@ public class DatabaseBuilder : IDatabaseBuilder
     _categorySeeder = categorySeeder;
     _groupSeeder = groupSeeder;
     _lineItemSeeder = lineItemSeeder;
+    _logSeeder = logSeeder;
     _orderSeeder = orderSeeder;
     _productSeeder = productSeeder;
     _promotionSeeder = promotionSeeder;
@@ -163,6 +165,10 @@ public class DatabaseBuilder : IDatabaseBuilder
     if (_lineItemSeeder is not null)
     {
       await _lineItemSeeder.SeedAsync(_configuration!, "LineItemSeeds");
+    }
+    if (_logSeeder is not null)
+    {
+      await _logSeeder.SeedAsync(_configuration!, "LogSeeds");
     }
     if (_orderSeeder is not null)
     {

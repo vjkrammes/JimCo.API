@@ -4,6 +4,8 @@ using JimCo.API.Infrastructure;
 using JimCo.Common;
 using JimCo.DataAccess.Interfaces;
 
+using Microsoft.AspNetCore.HttpOverrides;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -45,6 +47,10 @@ else
 {
   app.UseHsts();
 }
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+  ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 app.UseCors("defaultCORS");
 
 app.UseHttpsRedirection();
