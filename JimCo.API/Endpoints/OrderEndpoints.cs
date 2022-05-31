@@ -73,7 +73,7 @@ public static class OrderEndpoints
     {
       return Results.BadRequest(result);
     }
-    return Results.NoContent();
+    return Results.Ok();
   }
 
   private static async Task<IResult> CreateOrder([FromBody] CreateOrderModel model, IOrderService orderService, IProductService productService)
@@ -263,7 +263,7 @@ public static class OrderEndpoints
     var result = await productService.SellProductsAsync(products);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }

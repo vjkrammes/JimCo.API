@@ -230,5 +230,14 @@ namespace JimCo.API {
                 return ResourceManager.GetString("SignatureMismatch", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No product was found with that SKU..
+        /// </summary>
+        internal static string SKUNotFound {
+            get {
+                return ResourceManager.GetString("SKUNotFound", resourceCulture);
+            }
+        }
     }
 }

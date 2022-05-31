@@ -1,4 +1,6 @@
 ﻿
+using JimCo.Common;
+using JimCo.DataAccess.Entities;
 using JimCo.DataAccess.Interfaces;
 using JimCo.Models;
 using JimCo.Services.Interfaces;
@@ -20,5 +22,11 @@ public class SystemSettingsService : ISystemSettingsService
     SystemSettingsModel model = entities.First()!;
     model.CanDelete = false;
     return model;
+  }
+
+  public async Task<ApiError> UpdateAsync(SystemSettingsModel model)
+  {
+    SystemSettingsEntity entity = model!;
+    return ApiError.FromDalResult(await _systemSettingsRepository.UpdateAsync(entity));
   }
 }

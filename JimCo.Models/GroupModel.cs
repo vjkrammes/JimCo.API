@@ -7,20 +7,20 @@ public class GroupModel : ModelBase, IEquatable<GroupModel>, IComparable<GroupMo
 {
   public string Id { get; set; }
   public string Name { get; set; }
-  public string Identifier { get; set; }
+  public string UserId { get; set; }
 
   public GroupModel()
   {
     Id = string.Empty;
     Name = string.Empty;
-    Identifier = string.Empty;
+    UserId = string.Empty;
   }
 
   public static GroupModel? FromEntity(GroupEntity entity) => entity is null ? null : new()
   {
     Id = IdEncoder.EncodeId(entity.Id),
     Name = entity.Name ?? string.Empty,
-    Identifier = entity.Identifier ?? string.Empty,
+    UserId = IdEncoder.EncodeId(entity.UserId),
     CanDelete = true
   };
 
@@ -28,14 +28,14 @@ public class GroupModel : ModelBase, IEquatable<GroupModel>, IComparable<GroupMo
   {
     Id = IdEncoder.DecodeId(model.Id),
     Name = model.Name ?? string.Empty,
-    Identifier = model.Identifier ?? string.Empty
+    UserId = IdEncoder.DecodeId(model.UserId),
   };
 
   public GroupModel Clone() => new()
   {
     Id = Id,
     Name = Name ?? string.Empty,
-    Identifier = Identifier ?? string.Empty,
+    UserId = UserId ?? string.Empty,
     CanDelete = CanDelete
   };
 

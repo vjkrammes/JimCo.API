@@ -16,7 +16,7 @@ public static class CategoryEndpoints
     app.MapGet("/api/v1/Category/ByName/{categoryname}", ByName);
     app.MapPost("/api/v1/Category", Create).RequireAuthorization("ManagerPlusRequired");
     app.MapPut("/api/v1/Category", Update).RequireAuthorization("ManagerPlusRequired");
-    app.MapDelete("/api/v1/Category", Delete).RequireAuthorization("ManagerPlusRequired");
+    app.MapDelete("/api/v1/Category/Delete/{categoryid}", Delete).RequireAuthorization("ManagerPlusRequired");
   }
 
   private static async Task<IResult> GetCategories(ICategoryService categoryService) => 
@@ -93,21 +93,21 @@ public static class CategoryEndpoints
     return Results.BadRequest(result);
   }
   
-  private static async Task<IResult> Delete(string id, ICategoryService categoryService)
+  private static async Task<IResult> Delete(string categoryid, ICategoryService categoryService)
   {
-    if (string.IsNullOrWhiteSpace(id))
+    if (string.IsNullOrWhiteSpace(categoryid))
     {
       return Results.BadRequest(new ApiError(string.Format(Strings.Required, "id")));
     }
-    var model = await categoryService.ReadAsync(id);
+    var model = await categoryService.ReadAsync(categoryid);
     if (model is null)
     {
-      return Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "category", "id", id)));
+      return Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "category", "id", categoryid)));
     }
     var result = await categoryService.DeleteAsync(model);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }

@@ -63,7 +63,7 @@ public static class ProductEndpoints
   {
     var product = await productService.ReadForSkuAsync(sku);
     return product is null
-      ? Results.BadRequest(new ApiError(string.Format(Strings.ProductNotFound, "SKU", sku)))
+      ? Results.BadRequest(new ApiError(Strings.SKUNotFound))
       : Results.Ok(product);
   }
 
@@ -136,7 +136,7 @@ public static class ProductEndpoints
     var result = await productService.DeleteAsync(product);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }

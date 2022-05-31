@@ -8,12 +8,14 @@ public class SystemSettingsModel : ModelBase, IEquatable<SystemSettingsModel>
   public string Id { get; set; }
   public Guid SystemId { get; set; }
   public DateTime InceptionDate { get; set; }
+  public string Banner { get; set; }
 
   public SystemSettingsModel()
   {
     Id = string.Empty;
     SystemId = Guid.Empty;
     InceptionDate = default;
+    Banner = string.Empty;
   }
 
   public static SystemSettingsModel? FromEntity(SystemSettingsEntity entity) => entity is null ? null : new()
@@ -21,6 +23,7 @@ public class SystemSettingsModel : ModelBase, IEquatable<SystemSettingsModel>
     Id = IdEncoder.EncodeId(entity.Id),
     SystemId = entity.SystemId,
     InceptionDate = entity.InceptionDate,
+    Banner = entity.Banner ?? string.Empty,
     CanDelete = false
   };
 
@@ -28,7 +31,8 @@ public class SystemSettingsModel : ModelBase, IEquatable<SystemSettingsModel>
   {
     Id = IdEncoder.DecodeId(model.Id),
     SystemId = model.SystemId,
-    InceptionDate = model.InceptionDate
+    InceptionDate = model.InceptionDate,
+    Banner= model.Banner ?? string.Empty
   };
 
   public SystemSettingsModel Clone() => new()
@@ -36,6 +40,7 @@ public class SystemSettingsModel : ModelBase, IEquatable<SystemSettingsModel>
     Id = Id ?? string.Empty,
     SystemId = SystemId,
     InceptionDate = InceptionDate,
+    Banner = Banner ?? string.Empty,
     CanDelete = false
   };
 

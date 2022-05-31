@@ -174,4 +174,7 @@
   <data name="SignatureMismatch" xml:space="preserve">
     <value>The passed signature does not match the computed signature.</value>
   </data>
+  <data name="SKUNotFound" xml:space="preserve">
+    <value>No product was found with that SKU.</value>
+  </data>
 </root>

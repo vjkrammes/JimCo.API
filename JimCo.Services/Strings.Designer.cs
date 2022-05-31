@@ -133,6 +133,15 @@ namespace JimCo.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The {0} is required..
+        /// </summary>
+        internal static string Required {
+            get {
+                return ResourceManager.GetString("Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notice end date is before the start date..
         /// </summary>
         internal static string ReversedDates {

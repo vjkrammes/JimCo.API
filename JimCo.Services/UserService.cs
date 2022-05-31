@@ -173,4 +173,10 @@ public class UserService : IUserService
 
   public async Task<ApiError> ToggleRolesAsync(string email, params string[] roles) =>
     ApiError.FromDalResult(await _userRepository.ToggleRolesAsync(email, roles));
+
+  public async Task<string?> ReadNameForIdAsync(string id) => await _userRepository.ReadNameForIdAsync(IdEncoder.DecodeId(id));
+
+  public async Task<string?> ReadNameForIdentifierAsync(string identifier) => await _userRepository.ReadNameForIdentifierAsync(identifier);
+
+  public async Task<string?> ReadNameForEmailAsync(string email) => await _userRepository.ReadNameForEmailAsync(email);
 }

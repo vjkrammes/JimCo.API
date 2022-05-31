@@ -1,4 +1,7 @@
 ﻿using System.Data;
+using System.Data.SqlClient;
+
+using Dapper;
 
 using JimCo.Common;
 using JimCo.DataAccess.Entities;
@@ -6,6 +9,7 @@ using JimCo.DataAccess.Interfaces;
 using JimCo.DataAccess.Models;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace JimCo.DataAccess;
 public class UserRepository : RepositoryBase<UserEntity>, IUserRepository
@@ -192,4 +196,40 @@ public class UserRepository : RepositoryBase<UserEntity>, IUserRepository
     }
     return await ToggleRolesAsync(user, roles);
   }
+
+  private async Task<string?> ReadNameAsync(string column, string value)
+  {
+    var sql = $"select DisplayName from Users where {column}=@value;";
+    using var conn = new SqlConnection(ConnectionString);
+    try
+    {
+      await conn.OpenAsync();
+      var result = await conn.ExecuteScalarAsync<string>(sql, new { value });
+      return result;
+    }
+    finally
+    {
+      await conn.CloseAsync();
+    }
+  }
+
+  public async Task<string?> ReadNameForIdAsync(int id)
+  {
+    var sql = $"select DisplayName from Users where Id={id};";
+    using var conn = new SqlConnection(ConnectionString);
+    try
+    {
+      await conn.OpenAsync();
+      var result = await conn.ExecuteScalarAsync<string>(sql);
+      return result;
+    }
+    finally
+    {
+      await conn.CloseAsync();
+    }
+  }
+
+  public async Task<string?> ReadNameForIdentifierAsync(string identifier) => await ReadNameAsync("Identifier", identifier);
+
+  public async Task<string?> ReadNameForEmailAsync(string email) => await ReadNameAsync("Email", email);
 }

@@ -29,7 +29,7 @@ public static class LineItemEndpoints
     var result = await lineItemService.UpdateStatusAsync(lineItemId, (OrderStatus)status);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }
@@ -44,7 +44,7 @@ public static class LineItemEndpoints
     var result = await lineItemService.DeleteAsync(item);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }

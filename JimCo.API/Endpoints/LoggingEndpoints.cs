@@ -44,7 +44,7 @@ public static class LoggingEndpoints
     var response = await logService.InsertAsync(model);
     if (response.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(response);
   }

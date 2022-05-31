@@ -13,4 +13,7 @@ public interface IUserService : IDataService<UserModel>
   Task<ApiError> AddRolesAsync(string email, params string[] roles);
   Task<ApiError> RemoveRolesAsync(string email, params string[] roles);
   Task<ApiError> ToggleRolesAsync(string email, params string[] roles);
+  Task<string?> ReadNameForIdAsync(string id);
+  Task<string?> ReadNameForIdentifierAsync(string identifier);
+  Task<string?> ReadNameForEmailAsync(string email);
 }

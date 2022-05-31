@@ -64,7 +64,7 @@ public static class PromotionEndpoints
     var response = await promotionService.UpdateAsync(model);
     if (response.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(response);
   }
@@ -88,7 +88,7 @@ public static class PromotionEndpoints
     var response = await promotionService.CancelAsync(promotionId, identity);
     if (response.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(response);
   }
@@ -102,7 +102,7 @@ public static class PromotionEndpoints
     var response = await promotionService.UnCancelAsync(promotionId);
     if (response.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(response);
   }
@@ -117,7 +117,7 @@ public static class PromotionEndpoints
     var response = await promotionService.DeleteAsync(model);
     if (response.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(response);
   }
@@ -127,7 +127,7 @@ public static class PromotionEndpoints
     var result = await promotionService.DeleteAllExpiredAsync();
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }
@@ -137,7 +137,7 @@ public static class PromotionEndpoints
     var result = await promotionService.DeleteExpiredAsync(productId);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }

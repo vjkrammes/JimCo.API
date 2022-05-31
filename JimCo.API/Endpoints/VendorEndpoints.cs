@@ -100,7 +100,7 @@ public static class VendorEndpoints
     var result = await vendorService.DeleteAsync(vendor);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }

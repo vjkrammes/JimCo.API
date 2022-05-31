@@ -18,7 +18,14 @@ public class SystemSettingsRepository : RepositoryBase<SystemSettingsEntity>, IS
     return await base.InsertAsync(entity);
   }
 
-  public override Task<DalResult> UpdateAsync(SystemSettingsEntity entity) => throw new NotImplementedException();
+  public async override Task<DalResult> UpdateAsync(SystemSettingsEntity entity)
+  {
+    if (entity is null)
+    {
+      return DalResult.FromException(new ArgumentNullException(nameof(entity)));
+    }
+    return await base.UpdateAsync(entity);
+  }
 
   public override Task<DalResult> DeleteAsync(SystemSettingsEntity entity) => throw new NotImplementedException();
 

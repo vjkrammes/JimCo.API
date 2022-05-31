@@ -93,7 +93,7 @@ public static class AlertEndpoints
     {
       return Results.BadRequest(result);
     }
-    return Results.NoContent();
+    return Results.Ok();
   }
 
   public static async Task<IResult> Delete(string alertId, IAlertService alertService)
@@ -114,7 +114,7 @@ public static class AlertEndpoints
     var result = await alertService.DeleteAsync(alert);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }
@@ -141,7 +141,7 @@ public static class AlertEndpoints
     var result = await alertService.Acknowledge(alert);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }
@@ -177,7 +177,7 @@ public static class AlertEndpoints
     var result = await alertService.DeleteAllAsync(identifier);
     if (result.Successful)
     {
-      return Results.NoContent();
+      return Results.Ok();
     }
     return Results.BadRequest(result);
   }
@@ -185,6 +185,6 @@ public static class AlertEndpoints
   public static async Task<IResult> DeleteExpired(IAlertService alertService)
   {
     await alertService.DeleteExpiredAsync();
-    return Results.NoContent();
+    return Results.Ok();
   }
 }

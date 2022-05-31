@@ -239,7 +239,7 @@ public static class UserEndpoints
         IsAdmin = model.IsAdmin
       }, userService, contextAccessor);
     }
-    return result.Successful ? Results.NoContent() : Results.BadRequest(result);
+    return result.Successful ? Results.Ok() : Results.BadRequest(result);
   }
 
   private static async Task<IResult> UpdateIdentifier([FromBody] UserModel model, IUserService userService, IHttpContextAccessor httpContextAccessor)

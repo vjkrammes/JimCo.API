@@ -141,6 +141,9 @@
   <data name="NotFound" xml:space="preserve">
     <value>No {0} with the {1} '{2}' was found.</value>
   </data>
+  <data name="Required" xml:space="preserve">
+    <value>The {0} is required.</value>
+  </data>
   <data name="ReversedDates" xml:space="preserve">
     <value>Notice end date is before the start date.</value>
   </data>

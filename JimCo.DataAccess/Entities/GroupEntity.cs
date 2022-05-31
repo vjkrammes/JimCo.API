@@ -21,13 +21,13 @@ public class GroupEntity : IIdEntity, ISqlEntity
   public string Name { get; set; }
   [Required, MaxLength(Constants.UriLength)]
   [Indexed]
-  public string Identifier { get; set; }
+  public int UserId { get; set; }
 
   public GroupEntity()
   {
     Id = 0;
     Name = string.Empty;
-    Identifier = string.Empty;
+    UserId = 0;
   }
 
   public override string ToString() => Name;
@@ -37,7 +37,8 @@ public class GroupEntity : IIdEntity, ISqlEntity
   public static string Sql => "create table Groups(" +
     "Id integer constraint PKGroup primary key identity (1,1) not null, " +
     "Name nvarchar(50) not null, " +
-    "Identifier nvarchar(256) not null, " +
-    "Constraint UniqueGroupIdentity unique nonclustered (Name asc, Identifier asc) " +
+    "UserId integer not null, " +
+    "Constraint FkGroupUser foreign key (UserId) references Users(Id), " +
+    "Constraint UniqueGroupIdentity unique nonclustered (Name asc, UserId asc) " +
     ");";
 }

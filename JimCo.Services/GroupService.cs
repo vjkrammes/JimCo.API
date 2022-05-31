@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using JimCo.Common;
 using JimCo.DataAccess.Entities;
 using JimCo.DataAccess.Interfaces;
@@ -26,7 +21,7 @@ public class GroupService : IGroupService
 
   private async Task<ApiError> ValidateModelAsync(GroupModel model, bool checkid = false, bool update = false)
   {
-    if (model is null || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Identifier))
+    if (model is null || string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.UserId))
     {
       return new(Strings.InvalidModel);
     }
@@ -42,7 +37,7 @@ public class GroupService : IGroupService
         return new(string.Format(Strings.Invalid, "id"));
       }
     }
-    var existing = await _groupRepository.ReadAsync(model.Name, model.Identifier);
+    var existing = await _groupRepository.ReadAsync(model.Name, IdEncoder.DecodeId(model.UserId));
     if (update)
     {
       if (existing is not null && existing.Id != IdEncoder.DecodeId(model.Id))
@@ -97,7 +92,7 @@ public class GroupService : IGroupService
       return ApiError.FromException(ex);
     }
   }
-  
+
   public async Task<ApiError> DeleteAsync(GroupModel model)
   {
     if (model is null)
@@ -161,11 +156,14 @@ public class GroupService : IGroupService
     return Finish(entity);
   }
 
-  public async Task<GroupModel?> ReadAsync(string name, string identifier)
+  public async Task<GroupModel?> ReadAsync(string name, string userid)
   {
-    var entity = await _groupRepository.ReadAsync(name, identifier);
+    var pid = IdEncoder.DecodeId(userid);
+    var entity = await _groupRepository.ReadAsync(name, pid);
     return Finish(entity);
   }
+
+  public async Task<GroupModel?> ReadForNameAsync(string name) => (await _groupRepository.ReadForNameAsync(name))!;
 
   public async Task<PopulatedGroupModel?> ReadGroupAsync(string name)
   {
@@ -177,7 +175,7 @@ public class GroupService : IGroupService
     var ret = new PopulatedGroupModel(name);
     foreach (var entity in entities)
     {
-      var user = await _userRepository.ReadForIdentifierAsync(entity.Identifier);
+      var user = await _userRepository.ReadAsync( entity.UserId);
       if (user is not null)
       {
         UserModel model = user!;
@@ -185,5 +183,41 @@ public class GroupService : IGroupService
       }
     }
     return ret;
+  }
+
+  public async Task<bool> UserHasGroupsAsync(string userid)
+  {
+    var pid = IdEncoder.DecodeId(userid);
+    return await _groupRepository.UserHasGroupsAsync(pid);
+  }
+
+  public async Task<ApiError> RenameAsync(string name, string newname) => ApiError.FromDalResult(await _groupRepository.RenameAsync(name, newname));
+
+  public async Task<ApiError> AddUserToGroupAsync(string name, string userid)
+  {
+    if (string.IsNullOrWhiteSpace(name))
+    {
+      return new(string.Format(Strings.Required, "group name"));
+    }
+    if (string.IsNullOrWhiteSpace(userid))
+    {
+      return new(string.Format(Strings.Required, "user id"));
+    }
+    var pid = IdEncoder.DecodeId(userid);
+    return ApiError.FromDalResult(await _groupRepository.AddUserToGroupAsync(name, pid));
+  }
+
+  public async Task<ApiError> RemoveUserFromGroupAsync(string name, string userid)
+  {
+    if (string.IsNullOrWhiteSpace(name))
+    {
+      return new(string.Format(Strings.Required, "group name"));
+    }
+    if (string.IsNullOrWhiteSpace(userid))
+    {
+      return new(string.Format(Strings.Required, "user id"));
+    }
+    var pid = IdEncoder.DecodeId(userid);
+    return ApiError.FromDalResult(await _groupRepository.RemoveUserFromGroupAsync(name, pid));
   }
 }
