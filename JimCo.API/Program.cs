@@ -47,10 +47,6 @@ else
 {
   app.UseHsts();
 }
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-  ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
 app.UseCors("defaultCORS");
 
 app.UseHttpsRedirection();
