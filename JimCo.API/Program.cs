@@ -33,29 +33,30 @@ var settings = builder.Configuration.GetSection("AppSettings").Get<AppSettings>(
 
 var app = builder.Build();
 
+app.UseIpRateLimiting();
+
+if (app.Environment.IsProduction())
+{
+  app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseCors("defaultCORS");
+
+app.UseAuthentication();
+app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
-  app.UseSwagger();
-  app.UseSwaggerUI();
   app.Use(async (context, next) =>
   {
     Console.WriteLine($"Endpoint: {context.GetEndpoint()?.DisplayName ?? "(null)"}");
     await next(context);
   });
 }
-else
-{
-  app.UseHsts();
-}
-app.UseCors("defaultCORS");
-
-app.UseHttpsRedirection();
-app.UseIpRateLimiting();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.ConfigureEndpoints();
+
 if (settings.UpdateDatabase)
 {
   await UpdateDatabase(app.Services.GetRequiredService<IDatabaseBuilder>());
