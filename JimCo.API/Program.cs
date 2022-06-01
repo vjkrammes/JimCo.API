@@ -13,21 +13,21 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.ConfigureServices(builder.Configuration);
 
-//var origins = builder.Configuration.GetSection("CORSOrigins").Get<string[]>();
-//if (origins is null || !origins.Any())
-//{
+var origins = builder.Configuration.GetSection("CORSOrigins").Get<string[]>();
+if (origins is null || !origins.Any())
+{
   builder.Services.AddCors(options =>
-  options.AddPolicy("defaultCORS", builder =>
-  builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-//}
-//else
-//{
-//  builder.Services.AddCors(options =>
-//    options.AddPolicy(name: "defaultCORS", builder =>
-//    builder.WithOrigins(origins)
-//      .AllowAnyHeader()
-//      .AllowAnyMethod()));
-//}
+  options.AddDefaultPolicy(builder =>
+    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+}
+else
+{
+  builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(builder =>
+    builder.WithOrigins(origins)
+      .AllowAnyHeader()
+      .AllowAnyMethod()));
+}
 
 var settings = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
 
@@ -42,7 +42,7 @@ if (app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 
-app.UseCors("defaultCORS");
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
