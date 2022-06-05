@@ -31,7 +31,6 @@ public class VendorEntity : IIdEntity, ISqlEntity
   [Required, MaxLength(Constants.NameLength)]
   public string Contact { get; set; }
   [Required, MaxLength(Constants.UriLength)]
-  [Indexed]
   public string Email { get; set; }
   [Required, MaxLength(Constants.NameLength)]
   [Indexed]
@@ -70,5 +69,6 @@ public class VendorEntity : IIdEntity, ISqlEntity
     "Email nvarchar(50) not null, " +
     "Phone nvarchar(50) not null, " +
     "Fax nvarchar(50) not null, " +
+    "constraint UniqueEmail unique nonclustered (Email asc) " +
     ");";
 }

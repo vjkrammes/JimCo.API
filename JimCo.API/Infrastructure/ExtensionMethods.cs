@@ -80,6 +80,8 @@ public static class ExtensionMethods
         policy => policy.Requirements.Add(new OneRoleRequirement("Manager", "Admin")));
       options.AddPolicy("JimCoEmployee",
         policy => policy.Requirements.Add(new OneRoleRequirement("Employee", "Manager", "Admin")));
+      options.AddPolicy("VendorRequired",
+        policy => policy.Requirements.Add(new MustHaveRoleRequirement("Vendor")));
     });
 
     services.AddScoped<IAuthorizationHandler, MustHaveRoleHandler>();

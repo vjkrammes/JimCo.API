@@ -1,4 +1,5 @@
-﻿using JimCo.Common;
+﻿using JimCo.API.Infrastructure;
+using JimCo.Common;
 using JimCo.Common.Interfaces;
 using JimCo.Models;
 using JimCo.Services.Interfaces;
@@ -19,9 +20,12 @@ public static class ProductEndpoints
     app.MapGet("/api/v1/Product/ByName/{vendorid}/{name}", ByName);
     app.MapGet("/api/v1/Product/BySku/{sku}", BySku);
     app.MapGet("/api/v1/Product/ForCategory/{categoryId}", ForCategory);
+    app.MapGet("/api/v1/Product/ForVendor/{vendorid}", ForVendor);
     app.MapGet("/api/v1/Product/Random/{count}", Random);
     app.MapPost("/api/v1/Product", Create).RequireAuthorization("ManagerPlusRequired");
     app.MapPut("/api/v1/Product", Update).RequireAuthorization("ManagerPlusRequired");
+    app.MapPut("/api/v1/Product/Discontinue/{email}/{productId}", Discontinue).RequireAuthorization("ManagerPlusRequired", "VendorRequired");
+    app.MapPut("/api/v1/Product/Update/Vendor", VendorUpdate).RequireAuthorization("VendorRequired");
     app.MapDelete("/api/v1/Product/Delete/{id}", Delete).RequireAuthorization("ManagerPlusRequired");
   }
 
@@ -70,6 +74,12 @@ public static class ProductEndpoints
   private static async Task<IResult> ForCategory(string categoryid, IProductService productService)
   {
     var products = await productService.GetForCategoryAsync(categoryid);
+    return Results.Ok(products);
+  }
+
+  private static async Task<IResult> ForVendor(string vendorid, IProductService productService)
+  {
+    var products = await productService.GetForVendorAsync(vendorid);
     return Results.Ok(products);
   }
 
@@ -134,6 +144,70 @@ public static class ProductEndpoints
       return Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "product", "id", id)));
     }
     var result = await productService.DeleteAsync(product);
+    if (result.Successful)
+    {
+      return Results.Ok();
+    }
+    return Results.BadRequest(result);
+  }
+
+  private static async Task<IResult> Discontinue(string email, string productId, IProductService productService)
+  {
+    if (string.IsNullOrWhiteSpace(email))
+    {
+      return Results.BadRequest(new ApiError(string.Format(Strings.Required, "email")));
+    }
+    if (string.IsNullOrWhiteSpace(productId))
+    {
+      return Results.BadRequest(new ApiError(string.Format(Strings.Required, "product id")));
+    }
+    var result = await productService.DiscontinueAsync(email, productId);
+    if (result.Successful)
+    {
+      return Results.Ok();
+    }
+    return Results.BadRequest(result);
+  }
+
+  private static async Task<IResult> VendorUpdate([FromBody] VendorUpdateModel model, IProductService productService, IVendorService vendorService,
+    IUserService userService, IHttpContextAccessor accessor)
+  {
+    if (model is null || string.IsNullOrWhiteSpace(model.Id))
+    {
+      return Results.BadRequest(new ApiError(Strings.InvalidModel));
+    }
+    var token = accessor.HttpContext?.GetToken();
+    if (token is null)
+    {
+      return Results.BadRequest(new ApiError(Strings.NotAuthenticated));
+    }
+    // identifier ("sub") from token gets us the user
+    var identifier = token.Claims.FirstOrDefault(x => x.Type == "sub")?.Value;
+    if (string.IsNullOrWhiteSpace(identifier))
+    {
+      return Results.BadRequest(new ApiError(Strings.NotAuthenticated));
+    }
+    var user = await userService.ReadForIdentifierAsync(identifier);
+    if (user is null)
+    {
+      return Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "user", "identifier", identifier)));
+    }
+    // now use the email from the user to read the vendor
+    var vendor = await vendorService.ReadForEmailAsync(user.Email);
+    if (vendor is null)
+    {
+      return Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "vendor", "email", user.Email)));
+    }
+    var product = await productService.ReadAsync(model.Id);
+    if (product is null)
+    {
+      return Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "product", "id", model.Id)));
+    }
+    if (product.VendorId != vendor.Id)
+    {
+      return Results.BadRequest(new ApiError(Strings.NotAuthorized));
+    }
+    var result = await productService.VendorUpdateAsync(model);
     if (result.Successful)
     {
       return Results.Ok();

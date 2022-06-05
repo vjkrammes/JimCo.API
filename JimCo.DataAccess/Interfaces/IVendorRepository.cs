@@ -1,6 +1,4 @@
-﻿
-using JimCo.Common;
-using JimCo.DataAccess.Entities;
+﻿using JimCo.DataAccess.Entities;
 
 namespace JimCo.DataAccess.Interfaces;
 public interface IVendorRepository : IRepository<VendorEntity>
@@ -10,4 +8,5 @@ public interface IVendorRepository : IRepository<VendorEntity>
   Task<IEnumerable<VendorEntity>> SearchAsync(string searchText);
   Task<IEnumerable<VendorEntity>> SearchContactAsync(string contact);
   Task<IEnumerable<VendorEntity>> SearchEmailAsync(string email);
+  Task<VendorEntity?> ReadForEmailAsync(string email);
 }

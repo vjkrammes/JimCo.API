@@ -22,6 +22,7 @@ if (origins is null || !origins.Any())
 }
 else
 {
+  origins.ForEach(x => Console.WriteLine(x));
   builder.Services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
     builder.WithOrigins(origins)

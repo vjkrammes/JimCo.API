@@ -184,4 +184,6 @@ public class VendorService : IVendorService
   }
 
   public async Task<VendorModel?> ReadForNameAsync(string name) => await Finish(await _vendorRepository.ReadAsync(name))!;
+
+  public async Task<VendorModel?> ReadForEmailAsync(string email) => await Finish(await _vendorRepository.ReadForEmailAsync(email))!;
 }

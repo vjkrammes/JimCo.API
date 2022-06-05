@@ -53,4 +53,10 @@ public class VendorRepository : RepositoryBase<VendorEntity>, IVendorRepository
     var sql = "select * from Vendors where Email like CONCAT('%', @searchText, '%');";
     return await GetAsync(sql, new QueryParameter("searchText", searchText, DbType.String));
   }
+
+  public async Task<VendorEntity?> ReadForEmailAsync(string email)
+  {
+    var sql = "select * from Vendors where Email=@email;";
+    return await ReadAsync(sql, new QueryParameter { Name = "email", Value = email, Type = DbType.String });
+  }
 }

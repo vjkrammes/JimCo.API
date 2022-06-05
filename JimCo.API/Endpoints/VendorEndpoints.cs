@@ -15,6 +15,7 @@ public static class VendorEndpoints
     app.MapGet("/api/v1/Vendor", GetVendors);
     app.MapGet("/api/v1/Vendor/ById/{vendorid}", ById);
     app.MapGet("/api/v1/Vendor/ByName/{name}", ByName);
+    app.MapGet("/api/v1/Vendor/ByEmail/{email}", ByEmail);
     app.MapGet("/api/v1/Vendor/Page/{pageno}/{pagesize}", PageVendors);
     app.MapPost("/api/v1/Vendor/Create/{addRole}", CreateVendor).RequireAuthorization("ManagerPlusRequired");
     app.MapPut("/api/v1/Vendor/Update/{toggleRole}", UpdateVendor).RequireAuthorization("ManagerPlusRequired");
@@ -37,6 +38,14 @@ public static class VendorEndpoints
     var vendor = await vendorService.ReadForNameAsync(name);
     return vendor is null
       ? Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "vendor", "name", name)))
+      : Results.Ok(vendor);
+  }
+  
+  private static async Task<IResult> ByEmail(string email, IVendorService vendorService)
+  {
+    var vendor = await vendorService.ReadForEmailAsync(email);
+    return vendor is null
+      ? Results.BadRequest(new ApiError(string.Format(Strings.NotFound, "vendor", "email", email)))
       : Results.Ok(vendor);
   }
 

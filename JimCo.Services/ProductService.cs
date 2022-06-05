@@ -284,6 +284,33 @@ public class ProductService : IProductService
     return ApiError.FromDalResult(await _productRepository.DiscontinueAsync(email, pid));
   }
 
+  public async Task<ApiError> VendorUpdateAsync(VendorUpdateModel model)
+  {
+    if (model is null || string.IsNullOrWhiteSpace(model.Id))
+    {
+      return new(Strings.InvalidModel);
+    }
+    if (model.ReorderAmount < 0)
+    {
+      return new(string.Format(Strings.Invalid, "reorder amount"));
+    }
+    if (model.Cost <= 0)
+    {
+      return new(string.Format(Strings.Invalid, "cost"));
+    }
+    var pid = IdEncoder.DecodeId(model.Id);
+    var product = await _productRepository.ReadAsync(pid);
+    if (product is null)
+    {
+      return new(string.Format(Strings.NotFound, "product", "id", model.Id));
+    }
+    if (model.Cost > product.Price * 0.75M)
+    {
+      return new(string.Format(Strings.Invalid, "cost"));
+    }
+    return ApiError.FromDalResult(await _productRepository.VendorUpdateAsync(pid, model.ReorderAmount, model.Cost));
+  }
+
   public async Task<ApiError> SellProductsAsync(ProductSaleModel[] products) =>
     ApiError.FromDalResult(await _productRepository.SellProductsAsync(products.Select(x =>
     new ProductSaleEntity { ProductId = IdEncoder.DecodeId(x.ProductId), Quantity = x.Quantity }).ToArray()));

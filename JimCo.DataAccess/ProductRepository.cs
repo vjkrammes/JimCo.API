@@ -258,7 +258,7 @@ public class ProductRepository : RepositoryBase<ProductEntity>, IProductReposito
 
   public async Task<DalResult> DiscontinueAsync(string email, int productid)
   {
-    var vendor = await _vendorRepository.ReadAsync(email);
+    var vendor = await _vendorRepository.ReadForEmailAsync(email);
     if (vendor is null)
     {
       return new(DalErrorCode.NotFound, new Exception("Vendor not found"));
@@ -273,6 +273,7 @@ public class ProductRepository : RepositoryBase<ProductEntity>, IProductReposito
       return new(DalErrorCode.NotAuthorized, new Exception("Requester cannot update that product"));
     }
     using var conn = new SqlConnection(ConnectionString);
+    product.Discontinued = !product.Discontinued;
     try
     {
       await conn.OpenAsync();
@@ -287,6 +288,18 @@ public class ProductRepository : RepositoryBase<ProductEntity>, IProductReposito
     {
       await conn.CloseAsync();
     }
+  }
+
+  public async Task<DalResult> VendorUpdateAsync(int id, int reorderAmount, decimal cost)
+  {
+    var product = await ReadAsync(id);
+    if (product is null)
+    {
+      return DalResult.Duplicate;
+    }
+    product.ReorderAmount = reorderAmount;
+    product.Cost = cost;
+    return await UpdateAsync(product);
   }
 
   public async Task<DalResult> SellProductsAsync(ProductSaleEntity[] entities)

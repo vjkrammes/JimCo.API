@@ -8,4 +8,5 @@ public interface IVendorService : IDataService<VendorModel>
   Task<IEnumerable<VendorModel>> SearchForContactAsync(string contact);
   Task<IEnumerable<VendorModel>> SearchForEmailAsync(string email);
   Task<VendorModel?> ReadForNameAsync(string name);
+  Task<VendorModel?> ReadForEmailAsync(string email);
 }
