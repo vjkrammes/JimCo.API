@@ -1,4 +1,4 @@
-# ![VJK Solutions](https://vjk.solutions/images/logo-64.png) JimCO Retailers Demonstration App ![JimCo Logo](https://vjk.solutions/images/jimcologo-64.png)
+# ![VJK Solutions](https://vjk.solutions/images/logo-64.png) JimCo Retailers Demonstration App ![JimCo Logo](https://vjk.solutions/images/jimcologo-64.png)
 
 The **JimCo Retailers** demonstration application is a group of four related web applications. It consists of the following parts:
 
