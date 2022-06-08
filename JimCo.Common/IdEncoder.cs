@@ -22,5 +22,15 @@ public static class IdEncoder
 
   public static string EncodeId(int id) => _hasher.Encode(id);
 
-  public static int DecodeId(string hash) => _hasher.Decode(hash)?.FirstOrDefault() ?? 0;
+  public static int DecodeId(string hash)
+  {
+    try
+    {
+      return _hasher.Decode(hash)?.FirstOrDefault() ?? 0;
+    }
+    catch
+    {
+      return 0;
+    }
+  }
 }
